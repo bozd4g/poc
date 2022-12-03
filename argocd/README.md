@@ -76,8 +76,3 @@ To get the password;
 $ argoPass=$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
 echo $argoPass
 ```
-
-To create an app;
-```
-$ kubectl apply -f argocd/openshift-gitops-examples/components/applications/bgd-app.yaml
-```
