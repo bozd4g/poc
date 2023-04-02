@@ -13,13 +13,14 @@ import (
 )
 
 const (
-	host            = "127.0.0.1"
-	providerName    = "Server"
-	consumerName    = "Client"
+	host         = "127.0.0.1"
+	providerName = "Server"
+	consumerName = "Client"
 )
 
-func createPact() (pact *dsl.Pact, cleanUp func()) {
-	pact = &dsl.Pact{
+func Test_GetTodos_ShouldRunSuccesfully(t *testing.T) {
+	// Arrange
+	pact := &dsl.Pact{
 		Host:                     host,
 		Consumer:                 consumerName,
 		Provider:                 providerName,
@@ -27,14 +28,7 @@ func createPact() (pact *dsl.Pact, cleanUp func()) {
 		PactFileWriteMode:        "merge",
 	}
 
-	cleanUp = func() { pact.Teardown() }
-
-	return pact, cleanUp
-}
-
-func Test_GetTodos_ShouldRunSuccesfully(t *testing.T) {
-	pact, cleanUp := createPact()
-	defer cleanUp()
+	defer pact.Teardown()
 
 	pact.
 		AddInteraction().
@@ -53,9 +47,11 @@ func Test_GetTodos_ShouldRunSuccesfully(t *testing.T) {
 			Body: dsl.EachLike(dsl.StructMatcher{
 				"id":        dsl.Like(1),
 				"title":     dsl.Like("title"),
+				"completed": dsl.Like(false),
 			}, 1),
 		})
 
+	// Act & Assert
 	err := pact.Verify(func() error {
 		todoClient := NewClient(fmt.Sprintf("http://%s:%d", host, pact.Server.Port))
 		_, err := todoClient.GetTodos(context.Background())
