@@ -11,5 +11,8 @@ consumer:
 provider:
 	@go test ./... -tags=provider -count=1
 
+integration:
+	@go test ./... -tags=integration -count=1
+
 publish:
 	@sh .pact/publish.sh
