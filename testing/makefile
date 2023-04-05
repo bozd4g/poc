@@ -14,5 +14,8 @@ provider:
 integration:
 	@go test ./... -tags=integration -count=1
 
+unit:
+	@go test ./... -count=1
+
 publish:
 	@sh .pact/publish.sh
